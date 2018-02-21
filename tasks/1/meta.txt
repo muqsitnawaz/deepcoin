@@ -1,0 +1,5 @@
+threshold:0.8
+train/cats:3000
+train/dogs:3000
+validation/cats:1200
+validation/dogs:1200

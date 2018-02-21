@@ -5,3 +5,4 @@ coverage
 *.log
 yarn.lock
 .vscode
+.DS_store

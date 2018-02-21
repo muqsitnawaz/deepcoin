@@ -45,21 +45,21 @@ import os.path
 import argparse
 
 parser = argparse.ArgumentParser()
-
-parser.add_argument("x", type=int, help="batch size", default=20, nargs='?')
-parser.add_argument("y", type=int, help="number of epochs", default=10, nargs='?')
-
+parser.add_argument("--batch_size", "-b", type=int, help="batch size", default=20)
+parser.add_argument("--epochs", "-e", type=int, help="number of epochs", default=10)
+parser.add_argument("--num_train", "-t", type=int, help="number of training data", default=6000)
+parser.add_argument("--num_val", "-v", type=int, help="number of validation data", default=2400)
 args = parser.parse_args()
 # dimensions of our images.
 img_width, img_height = 150, 150
 
 train_data_dir = '../data/train'
 validation_data_dir = '../data/validation'
-nb_train_samples = 6000
-nb_validation_samples = 2400
+nb_train_samples = args.num_train
+nb_validation_samples = args.num_val
 
-batch_size = args.x
-epochs = args.y # originally 50
+batch_size = args.batch_size
+epochs = args.epochs # originally 50
 
 if K.image_data_format() == 'channels_first':
     input_shape = (3, img_width, img_height)

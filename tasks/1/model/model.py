@@ -49,12 +49,14 @@ parser.add_argument("--batch_size", "-b", type=int, help="batch size", default=2
 parser.add_argument("--epochs", "-e", type=int, help="number of epochs", default=10)
 parser.add_argument("--num_train", "-t", type=int, help="number of training data", default=6000)
 parser.add_argument("--num_val", "-v", type=int, help="number of validation data", default=2400)
+parser.add_argument("--node_id", "-n", type=str, help="id of node", default=0)
+parser.add_argument("--task_id", "-k", type=str, help="id of task", default=0)
 args = parser.parse_args()
 # dimensions of our images.
 img_width, img_height = 150, 150
 
-train_data_dir = '../data/train'
-validation_data_dir = '../data/validation'
+train_data_dir = './data/'+args.node_id+'/tasks/'+args.task_id+'/data/train'
+validation_data_dir = './data/'+args.node_id+'/tasks/'+args.task_id+'/data/validation'
 nb_train_samples = args.num_train
 nb_validation_samples = args.num_val
 

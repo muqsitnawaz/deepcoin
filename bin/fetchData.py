@@ -14,7 +14,7 @@ num_nodes = args.num_nodes
 taskId = args.taskId
 
 threshold = 0.0
-localDir = '../data/'+str(nodeId)+'/tasks/'+str(taskId)+'/'
+localDir = './data/'+str(nodeId)+'/tasks/'+str(taskId)+'/'
 localDataDir = localDir+'data/'
 localModelDir = localDir+'model/'
 if not os.path.exists(localDir):
@@ -25,7 +25,7 @@ if not os.path.exists(localModelDir):
 	os.makedirs(localModelDir)
 
 # Copy model and optional weights if not there
-srcDir = '../tasks/'+str(taskId)+'/model/'
+srcDir = './tasks/'+str(taskId)+'/model/'
 src_files = os.listdir(srcDir)
 for file_name in src_files:
     full_file_name = os.path.join(srcDir, file_name)
@@ -34,7 +34,7 @@ for file_name in src_files:
         shutil.copy(full_file_name, localModelDir)
 
 # Parse meta.txt
-for line in open('../tasks/'+str(taskId)+'/meta.txt'):
+for line in open('./tasks/'+str(taskId)+'/meta.txt'):
   fields = line.split(':')
   # print(fields[0][:5])
   if fields[0] == 'threshold':
@@ -48,10 +48,10 @@ for line in open('../tasks/'+str(taskId)+'/meta.txt'):
     lIdx = num_data/num_nodes*(nodeId-1)
     rIdx = lIdx+num_data/num_nodes
 
-    srcDir = '../tasks/'+str(taskId)+'/data/'
+    srcDir = './tasks/'+str(taskId)+'/data/'
     src_files = os.listdir(srcDir+fields[0]+'/')
     if len(src_files)==int(fields[1]):  
-      for file_name in src_files[lIdx:rIdx]:
+      for file_name in src_files[int(lIdx):int(rIdx)]:
           full_file_name = os.path.join(srcDir+fields[0]+'/', file_name)
           if (os.path.isfile(full_file_name)):
             if not(os.path.isfile(localDataDir+fields[0]+'/'+file_name)):
@@ -62,4 +62,5 @@ for line in open('../tasks/'+str(taskId)+'/meta.txt'):
           if (os.path.isfile(full_file_name)):
             if not(os.path.isfile(localDataDir+fields[0]+'/'+file_name)):
               shutil.copy(full_file_name, localDataDir+fields[0]+'/')
-# Output:threshold, lIdx,rIdx
+
+exit()

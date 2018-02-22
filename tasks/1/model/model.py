@@ -36,13 +36,22 @@ data/
 ```
 '''
 
+import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Activation, Dropout, Flatten, Dense
 from keras import backend as K
+from keras.backend.tensorflow_backend import set_session
 import os.path
 import argparse
+
+# Restrict GPU memory
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+config.gpu_options.per_process_gpu_memory_fraction = 0.3
+config.gpu_options.visible_device_list = "0"
+set_session(tf.Session(config=config))
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--batch_size", "-b", type=int, help="batch size", default=20)
@@ -55,6 +64,8 @@ args = parser.parse_args()
 # dimensions of our images.
 img_width, img_height = 150, 150
 
+# train_data_dir = '../data/train'
+# validation_data_dir = '../data/validation'
 train_data_dir = './data/'+args.node_id+'/tasks/'+args.task_id+'/data/train'
 validation_data_dir = './data/'+args.node_id+'/tasks/'+args.task_id+'/data/validation'
 nb_train_samples = args.num_train

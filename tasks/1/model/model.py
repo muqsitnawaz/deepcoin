@@ -103,7 +103,7 @@ model.compile(loss='binary_crossentropy',
               optimizer='rmsprop',
               metrics=['accuracy'])
 
-fname = 'tmp.h5'
+fname = './data/'+args.node_id+'/tasks/'+args.task_id+'/model/tmp.h5'
 if os.path.isfile(fname):
     model.load_weights(fname)
     print('weights loaded.')

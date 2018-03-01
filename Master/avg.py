@@ -41,8 +41,7 @@ for f in src_files:
 		del tmp_model
 		gc.collect()
 		counter = counter+1
-		# file = h5py.File(f,'r+')
-		# dataset = file['/dset']
-		# nums.append(dataset[0][0])
 model.set_weights(avg)
 model.save('avg.h5')
+
+exit()

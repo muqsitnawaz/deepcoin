@@ -2,12 +2,13 @@ import h5py
 import os
 import numpy as np
 import gc
+import sys
+from model import model
 
 taskId = 3
 model_dir = '../tasks/'+str(taskId)+'/model/'
-import sys
+
 sys.path.append(model_dir)
-from model import model
 
 print('Loading model...')
 model_base = model()

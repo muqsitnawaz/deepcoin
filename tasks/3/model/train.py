@@ -11,6 +11,8 @@ import numpy as np
 import os.path
 import argparse
 from model import model
+from keras.callbacks import ModelCheckpoint, Callback
+import time
 
 parser = argparse.ArgumentParser()
 parser = argparse.ArgumentParser()
@@ -150,14 +152,26 @@ if os.path.isfile(fname):
 else:
     print('No weights found. Start training.')
 
+class TimeHistory(Callback):
+    def on_train_begin(self, logs={}):
+        self.times = 0.0
+    def on_epoch_begin(self, batch, logs={}):
+        self.epoch_time_start = time.time()
+    def on_epoch_end(self, batch, logs={}):
+        self.times = self.times + time.time() - self.epoch_time_start
+        print(self.times)
+
+checkpoint = ModelCheckpoint(fname, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+time_callback = TimeHistory()
+callbacks_list = [checkpoint, time_callback]
+
 print('Train...')
 model.fit(x_train, y_train,
           batch_size=batch_size,
           epochs=epochs,
-          validation_data=(x_test, y_test))
-score, acc = model.evaluate(x_test, y_test, batch_size=batch_size)
-print('Test score:', score)
-print('Test accuracy:', acc)
-model.save_weights(fname)
+          validation_data=(x_test, y_test),
+          callbacks=callbacks_list)
+
+# model.save_weights(fname)
 
 exit()

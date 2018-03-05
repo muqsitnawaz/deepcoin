@@ -43,6 +43,8 @@ from keras.backend.tensorflow_backend import set_session
 import os.path
 import argparse
 from model import model
+from keras.callbacks import ModelCheckpoint, Callback
+import time
 
 # Restrict GPU memory
 config = tf.ConfigProto()
@@ -62,6 +64,8 @@ args = parser.parse_args()
 # dimensions of our images.
 img_width, img_height = 150, 150
 
+# train_data_dir = '../data/train'
+# validation_data_dir = '../data/validation'
 train_data_dir = './data/'+args.node_id+'/tasks/'+args.task_id+'/data/train'
 validation_data_dir = './data/'+args.node_id+'/tasks/'+args.task_id+'/data/validation'
 # train_data_dir = './data/'+str(args.node_id)+'/tasks/'+str(args.task_id)+'/data/train'
@@ -85,6 +89,7 @@ model.compile(loss='binary_crossentropy',
 
 # fname = './data/'+str(args.node_id)+'/tasks/'+str(args.task_id)+'/model/tmp.h5'
 fname = './data/'+args.node_id+'/tasks/'+args.task_id+'/model/tmp.h5'
+# fname = 'tmp.h5'
 if os.path.isfile(fname):
     model.load_weights(fname)
     print('weights loaded.')
@@ -114,13 +119,27 @@ validation_generator = test_datagen.flow_from_directory(
     batch_size=batch_size,
     class_mode='binary')
 
+# callback for printing out the total training time up to currently finished epoch
+class TimeHistory(Callback):
+    def on_train_begin(self, logs={}):
+        self.times = 0.0
+    def on_epoch_begin(self, batch, logs={}):
+        self.epoch_time_start = time.time()
+    def on_epoch_end(self, batch, logs={}):
+    	self.times = self.times + time.time() - self.epoch_time_start
+        print(self.times)
+
+checkpoint = ModelCheckpoint(fname, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+time_callback = TimeHistory()
+callbacks_list = [checkpoint, time_callback]
 model.fit_generator(
     train_generator,
     steps_per_epoch=nb_train_samples // batch_size,
     epochs=epochs,
     validation_data=validation_generator,
-    validation_steps=nb_validation_samples // batch_size)
+    validation_steps=nb_validation_samples // batch_size,
+    callbacks=callbacks_list)
 
-model.save_weights(fname)
+# model.save_weights(fname)
 
 exit()

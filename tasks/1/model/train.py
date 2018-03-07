@@ -126,7 +126,7 @@ class TimeHistory(Callback):
     def on_epoch_begin(self, batch, logs={}):
         self.epoch_time_start = time.time()
     def on_epoch_end(self, batch, logs={}):
-    	self.times = self.times + time.time() - self.epoch_time_start
+        self.times = self.times + time.time() - self.epoch_time_start
         print(self.times)
 
 checkpoint = ModelCheckpoint(fname, monitor='val_acc', verbose=1, save_best_only=True, mode='max')

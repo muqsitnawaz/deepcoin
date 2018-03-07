@@ -68,8 +68,6 @@ img_width, img_height = 150, 150
 # validation_data_dir = '../data/validation'
 train_data_dir = './data/'+args.node_id+'/tasks/'+args.task_id+'/data/train'
 validation_data_dir = './data/'+args.node_id+'/tasks/'+args.task_id+'/data/validation'
-# train_data_dir = './data/'+str(args.node_id)+'/tasks/'+str(args.task_id)+'/data/train'
-# validation_data_dir = './data/'+str(args.node_id)+'/tasks/'+str(args.task_id)+'/data/validation'
 nb_train_samples = args.num_train
 nb_validation_samples = args.num_val
 
@@ -87,9 +85,9 @@ model.compile(loss='binary_crossentropy',
               optimizer='rmsprop',
               metrics=['accuracy'])
 
-# fname = './data/'+str(args.node_id)+'/tasks/'+str(args.task_id)+'/model/tmp.h5'
-fname = './data/'+args.node_id+'/tasks/'+args.task_id+'/model/tmp.h5'
 # fname = 'tmp.h5'
+fname = './data/'+args.node_id+'/tasks/'+args.task_id+'/model/tmp.h5'
+
 if os.path.isfile(fname):
     model.load_weights(fname)
     print('weights loaded.')

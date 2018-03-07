@@ -18,14 +18,14 @@ print('Loading model...')
 model_base = model()
 print('Model Loaded.')
 print('Loading data...')
-validation_data_dir = '../tasks/'+str(taskId)+'/data/validation'
+validation_data_dir = './tasks/'+str(taskId)+'/data/validation'
 img_width, img_height = 150, 150
 test_datagen = ImageDataGenerator(rescale=1. / 255)
 validation_generator = test_datagen.flow_from_directory(validation_data_dir,
 				target_size=(img_width, img_height),batch_size=20,class_mode='binary')
 print('Data loaded.')
 
-srcDir = 'weights/1/'
+srcDir = './master/weights/1/'
 src_files = os.listdir(srcDir)
 num_nodes = len(src_files)
 num_keep = num_nodes-int(np.floor(num_nodes*remove_percent))

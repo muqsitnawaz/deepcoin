@@ -1,71 +1,63 @@
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-from keras.models import Sequential
-from keras.layers import LSTM,Dense
-from sklearn.preprocessing import MinMaxScaler
+'''Train a recurrent convolutional network on the IMDB sentiment
+classification task.
+Gets to 0.8498 test accuracy after 2 epochs. 41s/epoch on K520 GPU.
+Follow default! epoch num = 3 will overfit!
+'''
+from __future__ import print_function
+
+from keras.preprocessing import sequence
+from keras.utils.data_utils import get_file
+import numpy as np
 import os.path
 import argparse
 from model import model
+from keras.callbacks import ModelCheckpoint, Callback
+import time
+from load_data import load_data
 
 parser = argparse.ArgumentParser()
 parser = argparse.ArgumentParser()
-parser.add_argument("--batch_size", "-b", type=int, help="batch size", default=10)
-parser.add_argument("--epochs", "-e", type=int, help="number of epochs", default=50)
+parser.add_argument("--batch_size", "-b", type=int, help="batch size", default=30)
+parser.add_argument("--epochs", "-e", type=int, help="number of epochs", default=2)
 parser.add_argument("--num_train", "-t", type=int, help="number of training data", default=25000)
 parser.add_argument("--num_val", "-v", type=int, help="number of validation data", default=25000)
 args = parser.parse_args()
 
+# Training
 batch_size = args.batch_size
 epochs = args.epochs
 
-# Any results you write to the current directory are saved as output.
+max_features = 20000
+maxlen = 100
+'''
+Note:
+batch_size is highly sensitive.
+Only 2 epochs are needed as the dataset is very small.
+'''
 
-# data = pd.read_csv('../all_stocks_5yr.csv')
-# cl = data[data['Name']=='MMM'].close
+print('Loading data...')
+train_dir = '../data/train/'
+test_dir = '../data/validation/'
+(x_train, y_train), (x_test, y_test) = load_data(train_dir+'train.npz',test_dir+'test.npz',
+										num_words=max_features)
 
-# scl = MinMaxScaler()
-# #Scale the data
-# cl = cl.reshape(cl.shape[0],1)
-# cl = scl.fit_transform(cl)
+print(len(y_train), 'train sequences')
+print(len(y_test), 'test sequences')
 
+print('Pad sequences (samples x time)')
+x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
+x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
+print('x_train shape:', x_train.shape)
+print('x_test shape:', x_test.shape)
 
-# #Create a function to process the data into 7 day look back slices
-# def processData(data,lb):
-#     X,Y = [],[]
-#     for i in range(len(data)-lb-1):
-#         X.append(data[i:(i+lb),0])
-#         Y.append(data[(i+lb),0])
-#     return np.array(X),np.array(Y)
-# X,y = processData(cl,7)
-# X_train,X_test = X[:int(X.shape[0]*0.80)],X[int(X.shape[0]*0.80):]
-# y_train,y_test = y[:int(y.shape[0]*0.80)],y[int(y.shape[0]*0.80):]
-# print(X_train.shape[0])
-# print(X_test.shape[0])
-# print(y_train.shape[0])
-# print(y_test.shape[0])
+print('Build model...')
 
-# np.savez('../data/train/train', X_train = X_train, y_train = y_train)
-# np.savez('../data/validation/test', X_test = X_test, y_test = y_test)
+model = model(max_features, maxlen)
 
-with np.load('../data/train/train.npz') as f:
-        X_train, y_train = f['X_train'], f['y_train']
-with np.load('../data/validation/test.npz') as f:
-        X_test, y_test = f['X_test'], f['y_test']
+model.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
 
-print(X_train.shape[0])
-print(X_test.shape[0])
-print(y_train.shape[0])
-print(y_test.shape[0])
-
-#Reshape data for (Sample,Timestep,Features) 
-X_train = X_train.reshape((X_train.shape[0],X_train.shape[1],1))
-X_test = X_test.reshape((X_test.shape[0],X_test.shape[1],1))
-
-#import model
-model = model()
-model.compile(optimizer='adam',loss='mse')
-
-#Fit model with history to check for overfitting
 fname = 'tmp.h5'
 if os.path.isfile(fname):
     model.load_weights(fname)
@@ -73,26 +65,26 @@ if os.path.isfile(fname):
 else:
     print('No weights found. Start training.')
 
+class TimeHistory(Callback):
+    def on_train_begin(self, logs={}):
+        self.times = 0.0
+    def on_epoch_begin(self, batch, logs={}):
+        self.epoch_time_start = time.time()
+    def on_epoch_end(self, batch, logs={}):
+        self.times = self.times + time.time() - self.epoch_time_start
+        print(self.times)
+
+checkpoint = ModelCheckpoint(fname, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+time_callback = TimeHistory()
+callbacks_list = [checkpoint, time_callback]
+
 print('Train...')
+model.fit(x_train, y_train,
+          batch_size=batch_size,
+          epochs=epochs,
+          validation_data=(x_test, y_test),
+          callbacks=callbacks_list)
 
-model.fit(X_train,y_train,
-	batch_size=batch_size,
-	epochs=epochs,
-	validation_data=(X_test,y_test),
-	shuffle=False)
-
-#print(model.evaluate(X_test, y_test, batch_size = batch_size))
-
-
-model.save_weights(fname)
+# model.save_weights(fname)
 
 exit()
-
-
-
-
-
-
-
-
-

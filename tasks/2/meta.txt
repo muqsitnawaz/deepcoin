@@ -1,0 +1,3 @@
+threshold:0.85
+train:25000
+validation:25000

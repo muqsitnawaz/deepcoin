@@ -4,7 +4,7 @@ import numpy as np
 from numpy import linalg as LA
 from operator import itemgetter
 
-taskId = 3
+taskId = 2
 model_dir = '../tasks/'+str(taskId)+'/model/'
 import sys
 sys.path.append(model_dir)
@@ -23,10 +23,15 @@ print('Loading data...')
 x_test = sequence.pad_sequences(x_test, maxlen=100)
 print('Data loaded.')
 
-srcDir = 'weights/2/'
+srcDir = 'weights/'+str(taskId)+'/'
 src_files = os.listdir(srcDir)
-num_nodes = len(src_files)
+num_nodes = 0
+for f in src_files:
+	if f.endswith(".h5") or f.endswith('.hdf5'):
+		num_nodes = num_nodes+1
+
 num_keep = num_nodes-int(np.floor(num_nodes*remove_percent))
+print('Keep: ', num_keep)
 
 file_acc = {}
 tmp_model = model_base

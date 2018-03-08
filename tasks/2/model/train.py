@@ -26,6 +26,8 @@ args = parser.parse_args()
 # Training
 batch_size = args.batch_size
 epochs = args.epochs
+num_train = args.num_train
+num_val = args.num_val
 
 max_features = 20000
 maxlen = 100
@@ -47,6 +49,10 @@ print(len(y_test), 'test sequences')
 print('Pad sequences (samples x time)')
 x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
 x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
+x_train = x_train[:num_train]
+y_train = y_train[:num_train]
+x_test = x_test[:num_val]
+y_test = y_test[:num_val]
 print('x_train shape:', x_train.shape)
 print('x_test shape:', x_test.shape)
 

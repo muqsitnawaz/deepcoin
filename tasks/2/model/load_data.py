@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.utils import shuffle
 
 def load_data(path1='../data/train/train.npz',path2='../data/validation/test.npz',
 			  num_words=20000, skip_top=0,
@@ -84,5 +85,8 @@ def load_data(path1='../data/train/train.npz',path2='../data/validation/test.npz
     idx = len(x_train)
     x_train, y_train = np.array(xs[:idx]), np.array(labels[:idx])
     x_test, y_test = np.array(xs[idx:]), np.array(labels[idx:])
+
+    x_train, y_train = shuffle(x_train, y_train)
+    x_test, y_test = shuffle(x_test, y_test)
 
     return (x_train, y_train), (x_test, y_test)

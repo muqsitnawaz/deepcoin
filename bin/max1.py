@@ -4,7 +4,7 @@ import numpy as np
 from operator import itemgetter
 
 taskId = 1
-nb_validation_samples = 2400
+nb_validation_samples = 50
 model_dir = 'tasks/'+str(taskId)+'/model/'
 import sys
 sys.path.append(model_dir)
@@ -24,7 +24,6 @@ print('Done.')
 
 srcDir = '/home/ubuntu/efs/data/'
 src_folders = os.listdir(srcDir)
-src_folders = [x for x in src_folders if os.path.isdir(x)] 
 print(src_folders)
 
 print('Calculating accuracy...')
@@ -36,6 +35,7 @@ for i in range(len(src_folders)):
 	nodeId = src_folders[i]
 	full_f = srcDir+nodeId+'/tasks/'+str(taskId)+'/tmp.h5'
 	if os.path.isfile(full_f):
+		print('Loaded: ' + full_f)
 		tmp_model.load_weights(full_f)
 		_, acc = tmp_model.evaluate_generator(validation_generator,
 						steps=nb_validation_samples // 20)
@@ -43,7 +43,7 @@ for i in range(len(src_folders)):
 		file_acc[nodeId]=acc
 
 file_acc = sorted(file_acc.items(), key=itemgetter(1), reverse=True)
-print(file_acc[0][0])
+print('Winner node: ' + file_acc[0][0])
 print('Done')
 
 # save opt.h5 to all nodes

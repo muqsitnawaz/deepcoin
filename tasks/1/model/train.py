@@ -66,8 +66,8 @@ img_width, img_height = 150, 150
 
 # train_data_dir = '../data/train'
 # validation_data_dir = '../data/validation'
-train_data_dir = './data/'+args.node_id+'/tasks/'+args.task_id+'/data/train'
-validation_data_dir = './data/'+args.node_id+'/tasks/'+args.task_id+'/data/validation'
+train_data_dir = '~/efs/data/'+args.node_id+'/tasks/'+args.task_id+'/data/train'
+validation_data_dir = '~/efs/data/'+args.node_id+'/tasks/'+args.task_id+'/data/validation'
 nb_train_samples = args.num_train
 nb_validation_samples = args.num_val
 
@@ -86,7 +86,7 @@ model.compile(loss='binary_crossentropy',
               metrics=['accuracy'])
 
 # fname = 'tmp.h5'
-fname = './data/'+args.node_id+'/tasks/'+args.task_id+'/model/tmp.h5'
+fname = '~/efs/data/'+args.node_id+'/tasks/'+args.task_id+'/tmp.h5'
 
 if os.path.isfile(fname):
     model.load_weights(fname)
@@ -137,7 +137,5 @@ model.fit_generator(
     validation_data=validation_generator,
     validation_steps=nb_validation_samples // batch_size,
     callbacks=callbacks_list)
-
-# model.save_weights(fname)
 
 exit()

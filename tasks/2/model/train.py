@@ -21,6 +21,8 @@ parser.add_argument("--batch_size", "-b", type=int, help="batch size", default=3
 parser.add_argument("--epochs", "-e", type=int, help="number of epochs", default=2)
 parser.add_argument("--num_train", "-t", type=int, help="number of training data", default=25000)
 parser.add_argument("--num_val", "-v", type=int, help="number of validation data", default=25000)
+parser.add_argument("--node_id", "-n", type=str, help="id of node", default=0)
+parser.add_argument("--task_id", "-k", type=str, help="id of task", default=0)
 args = parser.parse_args()
 
 # Training
@@ -38,8 +40,10 @@ Only 2 epochs are needed as the dataset is very small.
 '''
 
 print('Loading data...')
-train_dir = '../data/train/'
-test_dir = '../data/validation/'
+train_dir = '~/efs/data/'+args.node_id+'/tasks/'+args.task_id+'/data/train/'
+test_dir = '~/efs/data/'+args.node_id+'/tasks/'+args.task_id+'/data/validation/'
+# train_dir = '../data/train/'
+# test_dir = '../data/validation/'
 (x_train, y_train), (x_test, y_test) = load_data(train_dir+'train.npz',test_dir+'test.npz',
 										num_words=max_features)
 
@@ -64,7 +68,7 @@ model.compile(loss='binary_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-fname = 'tmp.h5'
+fname = '~/efs/data/'+args.node_id+'/tasks/'+args.task_id+'/tmp.h5'
 if os.path.isfile(fname):
     model.load_weights(fname)
     print('weights loaded.')

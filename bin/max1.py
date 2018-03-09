@@ -22,7 +22,7 @@ test_datagen = ImageDataGenerator(rescale=1. / 255)
 validation_generator = test_datagen.flow_from_directory(validation_data_dir, target_size=(150, 150),batch_size=20,class_mode='binary')
 print('Done.')
 
-srcDir = '~/efs/data/'
+srcDir = '/home/ubuntu/efs/data/'
 src_folders = os.listdir(srcDir)
 src_folders = [x for x in src_folders if os.path.isdir(x)] 
 print(src_folders)

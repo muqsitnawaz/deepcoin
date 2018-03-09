@@ -68,7 +68,7 @@ model.compile(loss='binary_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-fname = '~/efs/data/'+args.node_id+'/tasks/'+args.task_id+'/tmp.h5'
+fname = '/home/ubuntu/efs/data/'+args.node_id+'/tasks/'+args.task_id+'/tmp.h5'
 if os.path.isfile(fname):
     model.load_weights(fname)
     print('Previous weights loaded.')

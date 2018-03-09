@@ -39,11 +39,11 @@ batch_size is highly sensitive.
 Only 2 epochs are needed as the dataset is very small.
 '''
 
-print('Loading data...')
-train_dir = '~/efs/data/'+args.node_id+'/tasks/'+args.task_id+'/data/train/'
-test_dir = '~/efs/data/'+args.node_id+'/tasks/'+args.task_id+'/data/validation/'
 # train_dir = '../data/train/'
 # test_dir = '../data/validation/'
+train_dir = 'data/'+args.node_id+'/tasks/'+args.task_id+'/data/train/'
+test_dir = 'data/'+args.node_id+'/tasks/'+args.task_id+'/data/validation/'
+
 (x_train, y_train), (x_test, y_test) = load_data(train_dir+'train.npz',test_dir+'test.npz',
 										num_words=max_features)
 
@@ -71,7 +71,7 @@ model.compile(loss='binary_crossentropy',
 fname = '~/efs/data/'+args.node_id+'/tasks/'+args.task_id+'/tmp.h5'
 if os.path.isfile(fname):
     model.load_weights(fname)
-    print('weights loaded.')
+    print('Previous weights loaded.')
 else:
     print('No weights found. Start training.')
 

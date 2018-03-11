@@ -4,7 +4,7 @@ import numpy as np
 from operator import itemgetter
 
 taskId = 1
-nb_validation_samples = 50
+nb_validation_samples = 2400
 model_dir = 'tasks/'+str(taskId)+'/model/'
 import sys
 sys.path.append(model_dir)
